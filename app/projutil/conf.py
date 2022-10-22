@@ -1,0 +1,2 @@
+APP_TITLE = ""
+LOGGER_NAME = ""
