@@ -1,0 +1,4 @@
+DATABASE_CONNECTION_NAME = ""
+
+DATABASE_NAME = ".sqlite"
+TABLE_NAME_KEYSTORE = "keystore"
