@@ -153,7 +153,6 @@ class Ui_MainWindow(object):
         self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label)
 
         self.comPortInput = QComboBox(self.layoutWidget)
-        self.comPortInput.addItem("")
         self.comPortInput.setObjectName(u"comPortInput")
 
         self.formLayout.setWidget(0, QFormLayout.FieldRole, self.comPortInput)
@@ -230,8 +229,6 @@ class Ui_MainWindow(object):
         self.findDevice.setText(QCoreApplication.translate("MainWindow", u"Find Device", None))
         self.configure.setText(QCoreApplication.translate("MainWindow", u"Configure", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"COM Port :", None))
-        self.comPortInput.setItemText(0, QCoreApplication.translate("MainWindow", u"None", None))
-
         self.menuMenu.setTitle(QCoreApplication.translate("MainWindow", u"Menu", None))
         self.menuDevice.setTitle(QCoreApplication.translate("MainWindow", u"Device", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
