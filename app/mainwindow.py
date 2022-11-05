@@ -11,7 +11,7 @@ from logging.config import dictConfig
 import PySide6
 
 from PySide6.QtWidgets import QMainWindow,QListWidgetItem
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt,Signal, Slot
 from PySide6.QtGui import QIntValidator
 from .ui.ui_mainwindow import Ui_MainWindow
 from .projutil.log_conf import DIC_LOGGING_CONFIG
@@ -36,16 +36,21 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.load_ui()
         self.thread = SerialPort()
-        self.thread.started.connect()
+        # self.thread.started.connect(self.feedback)
         self.thread.start()
         # Validate slave Id filed 
         validator = QIntValidator(1,147, self)
         self.input = self.ui.slaveIdInput.setValidator(validator)
+
         self.ui.findDevice.clicked.connect(self.find_device)
+
+        self.ui.configure.clicked.connect(self.configure)
+
         self.ui.typeInput.currentTextChanged.connect(self.test)
         # map the device type to model
         self.ui.modelNoInput.setText(type_to_model[self.ui.typeInput.currentText()])
-        self.select_port.feedback.connect(self.feedback)
+        
+        self.thread.feedback.connect(self.receive_fb)
         # list the comunication port
         ports = list(port_list.comports())
         for i,p in enumerate(ports):
@@ -66,6 +71,8 @@ class MainWindow(QMainWindow):
             "parity" : self.ui.parityInput.currentText()
         }
         print(config)
+        find_message = "UNP\rFND\r\n"
+        # feedback = "UNP\rACK:1\rMDN:01\rSLN:12345\rSID:101\rBDR:1\rPRB:0\r\n"
         self.ui.listWidget.clear()
         for key, value in config.items():
             try:
@@ -73,7 +80,7 @@ class MainWindow(QMainWindow):
                 self.ui.listWidget.addItem( key +" : "+value)
             except:
                 print("Data is not printing in the text box")   
-        self.thread.send_data(config)
+        self.thread.send_data(find_message)
 
     def test(self):
         self.ui.modelNoInput.setText(type_to_model[self.ui.typeInput.currentText()])
@@ -82,5 +89,19 @@ class MainWindow(QMainWindow):
         port_name = self.ui.comPortInput.currentText()[0:4]
         self.serial_port.port = port_name
 
-    def feedback(self):
-        print("Thread is running")
+    def receive_fb(self,fb):
+        index = 0
+        config_list = []
+        for idx,char in enumerate(fb):
+            if(char == "\r"):
+                config_list_item = fb[index:idx]
+                config_list.append(config_list_item)
+                index = idx+1
+        self.ui.serialNoInput.setText(config_list[3][4:])  
+        self.ui.listWidget.clear()
+        self.ui.listWidget.addItem("Feedback : "+fb)
+
+    def configure(self):
+        configure_info = "UNP\rCNG\rMDN:"+type_to_model[self.ui.typeInput.currentText()]+"\rSLN:"+self.ui.serialNoInput.text()+"\rSID:"+self.ui.slaveIdInput.text()+"\rBDR:"+str(self.ui.baudRateInput.currentIndex())+"\rPRB:"+str(self.ui.parityInput.currentIndex())+"\r\n"
+        print(configure_info)
+        self.thread.send_data(configure_info)
