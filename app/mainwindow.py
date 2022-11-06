@@ -49,7 +49,7 @@ class MainWindow(QMainWindow):
         self.ui.typeInput.currentTextChanged.connect(self.test)
         # map the device type to model
         self.ui.modelNoInput.setText(type_to_model[self.ui.typeInput.currentText()])
-        
+
         self.thread.feedback.connect(self.receive_fb)
         # list the comunication port
         ports = list(port_list.comports())
@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
         }
         print(config)
         find_message = "UNP\rFND\r\n"
-        # feedback = "UNP\rACK:1\rMDN:01\rSLN:12345\rSID:101\rBDR:1\rPRB:0\r\n"
+        feedback = "UNP\rACK:1\rMDN:01\rSLN:12345\rSID:101\rBDR:1\rPRB:0\r\n"
         self.ui.listWidget.clear()
         for key, value in config.items():
             try:
@@ -90,18 +90,28 @@ class MainWindow(QMainWindow):
         self.serial_port.port = port_name
 
     def receive_fb(self,fb):
-        index = 0
-        config_list = []
-        for idx,char in enumerate(fb):
-            if(char == "\r"):
-                config_list_item = fb[index:idx]
-                config_list.append(config_list_item)
-                index = idx+1
-        self.ui.serialNoInput.setText(config_list[3][4:])  
+        splitted_string = fb.split("\r")
+        if "\n" and "UNP" in fb:
+            print("true")
+            splitted_string.remove("\n")
+            splitted_string.remove("UNP")
+        config_dic = {}
+        for item in splitted_string:
+            splited_item = item.split(":")
+            config_dic[splited_item[0]] = splited_item[1]
+        print(config_dic)
+        if "SLN" in config_dic.keys():
+            self.ui.serialNoInput.setText(config_dic['SLN'])
+        if "SID" in config_dic.keys():    
+            self.ui.slaveIdInput.setText(config_dic['SID'])
+        if "BDR" in config_dic.keys():    
+            self.ui.baudRateInput.setCurrentIndex(int(config_dic['BDR']))
+        if "PRB" in config_dic.keys():
+            self.ui.parityInput.setCurrentIndex(int(config_dic['PRB']))
         self.ui.listWidget.clear()
         self.ui.listWidget.addItem("Feedback : "+fb)
 
     def configure(self):
-        configure_info = "UNP\rCNG\rMDN:"+type_to_model[self.ui.typeInput.currentText()]+"\rSLN:"+self.ui.serialNoInput.text()+"\rSID:"+self.ui.slaveIdInput.text()+"\rBDR:"+str(self.ui.baudRateInput.currentIndex())+"\rPRB:"+str(self.ui.parityInput.currentIndex())+"\r\n"
+        configure_info = "UNP\rCFG\rMDN:"+type_to_model[self.ui.typeInput.currentText()]+"\rSID:"+self.ui.slaveIdInput.text()+"\rBDR:"+str(self.ui.baudRateInput.currentIndex())+"\rPRB:"+str(self.ui.parityInput.currentIndex())+"\r\n"
         print(configure_info)
         self.thread.send_data(configure_info)

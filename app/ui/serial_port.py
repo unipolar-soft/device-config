@@ -14,7 +14,7 @@ class SerialPort(QThread):
         super(SerialPort, self).__init__()
         self.send_flag = False
         self.serial = serial.Serial()
-        self.serial.port = "COM5"
+        self.serial.port = "COM7"
         self.serial.baudrate=115200
         self.serial.bytesize=8
         self.serial.timeout=10

@@ -211,6 +211,7 @@ class Ui_MainWindow(object):
         self.modelNoInput.setText("")
         self.serialNo.setText(QCoreApplication.translate("MainWindow", u"Serial No :", None))
         self.slaveId.setText(QCoreApplication.translate("MainWindow", u"Slave ID :", None))
+        self.slaveIdInput.setText(QCoreApplication.translate("MainWindow", u"1", None))
         self.slaveIdInput.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Input number between 1 to 247", None))
         self.baudRate.setText(QCoreApplication.translate("MainWindow", u"Baud Rate :", None))
         self.baudRateInput.setItemText(0, QCoreApplication.translate("MainWindow", u"4800", None))
