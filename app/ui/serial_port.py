@@ -1,8 +1,6 @@
-import string
-import sys, time
+import time
 from PySide6.QtGui import *
 from PySide6.QtCore import *
-import serial.tools.list_ports as port_list
 import serial
 
 # This is a thread and will start when the program start
@@ -45,3 +43,4 @@ class SerialPort(QThread):
     def send_data(self,message):
         self.send_flag = True       
         self.message = message
+              

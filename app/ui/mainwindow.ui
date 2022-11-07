@@ -282,6 +282,9 @@
     </widget>
     <addaction name="menuDevice"/>
     <addaction name="actionQuit"/>
+    <addaction name="separator"/>
+    <addaction name="actionConnect"/>
+    <addaction name="actionDisconnect"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -305,6 +308,16 @@
   <action name="actionGateway">
    <property name="text">
     <string>Gateway</string>
+   </property>
+  </action>
+  <action name="actionConnect">
+   <property name="text">
+    <string>Connect</string>
+   </property>
+  </action>
+  <action name="actionDisconnect">
+   <property name="text">
+    <string>Disconnect</string>
    </property>
   </action>
  </widget>
