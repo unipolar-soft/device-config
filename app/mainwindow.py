@@ -26,6 +26,8 @@ from app.ui.serial_port import SerialPort
 
 dictConfig(DIC_LOGGING_CONFIG)
 logger = logging.getLogger(LOGGER_NAME)
+
+#Here is a mapping from device type to device model
 type_to_model = {
     "2 CH AI,4 Ch DI" : "01",
     "4 CH AI" : "02",
@@ -35,11 +37,11 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.load_ui()
-        self.thread = SerialPort()
+        self.thread = SerialPort()              # Instantiate the SeraialPort class.
         # self.thread.started.connect(self.feedback)
-        self.thread.start()
-        # Validate slave Id filed 
-        validator = QIntValidator(1,147, self)
+        self.thread.start()                     # Start the Serial port.
+         
+        validator = QIntValidator(1,147, self)  # Validate slave Id filed
         self.input = self.ui.slaveIdInput.setValidator(validator)
 
         self.ui.findDevice.clicked.connect(self.find_device)
@@ -47,19 +49,19 @@ class MainWindow(QMainWindow):
         self.ui.configure.clicked.connect(self.configure)
 
         self.ui.typeInput.currentTextChanged.connect(self.test)
-        # map the device type to model
-        self.ui.modelNoInput.setText(type_to_model[self.ui.typeInput.currentText()])
+        
+        self.ui.modelNoInput.setText(type_to_model[self.ui.typeInput.currentText()])               # map the device type to model
 
         self.thread.feedback.connect(self.receive_fb)
-        # list the comunication port
-        ports = list(port_list.comports())
+        
+        ports = list(port_list.comports())       # list the comunication port
         for i,p in enumerate(ports):
             self.ui.comPortInput.insertItem(i,p.name+"-"+p.description)  # Display the port in combobox 
 
     def load_ui(self):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
+# This function's main purpose is to send the find message to the thread as well as display the current field's data on the text field.
     def find_device(self):
         config = {
             "COM_port" : self.ui.comPortInput.currentText(),
@@ -88,7 +90,7 @@ class MainWindow(QMainWindow):
     def select_port(self):
         port_name = self.ui.comPortInput.currentText()[0:4]
         self.serial_port.port = port_name
-
+# This function is used for receving the feedback from the thread which is comming from device.
     def receive_fb(self,fb):
         splitted_string = fb.split("\r")
         if "\n" and "UNP" in fb:
@@ -110,7 +112,7 @@ class MainWindow(QMainWindow):
             self.ui.parityInput.setCurrentIndex(int(config_dic['PRB']))
         self.ui.listWidget.clear()
         self.ui.listWidget.addItem("Feedback : "+fb)
-
+# This function is used for sending the user selected configuration to the thread.
     def configure(self):
         configure_info = "UNP\rCFG\rMDN:"+type_to_model[self.ui.typeInput.currentText()]+"\rSID:"+self.ui.slaveIdInput.text()+"\rBDR:"+str(self.ui.baudRateInput.currentIndex())+"\rPRB:"+str(self.ui.parityInput.currentIndex())+"\r\n"
         print(configure_info)
