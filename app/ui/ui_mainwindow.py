@@ -34,6 +34,7 @@ class Ui_MainWindow(object):
         self.actionGateway.setObjectName(u"actionGateway")
         self.actionConnect = QAction(MainWindow)
         self.actionConnect.setObjectName(u"actionConnect")
+        self.actionConnect.setCheckable(True)
         self.actionDisconnect = QAction(MainWindow)
         self.actionDisconnect.setObjectName(u"actionDisconnect")
         self.centralwidget = QWidget(MainWindow)
@@ -156,10 +157,11 @@ class Ui_MainWindow(object):
 
         self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label)
 
-        self.comPortInput = QComboBox(self.layoutWidget)
-        self.comPortInput.setObjectName(u"comPortInput")
+        self.comportinput = QLineEdit(self.layoutWidget)
+        self.comportinput.setObjectName(u"comportinput")
+        self.comportinput.setReadOnly(True)
 
-        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.comPortInput)
+        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.comportinput)
 
 
         self.verticalLayout.addLayout(self.formLayout)
@@ -175,6 +177,7 @@ class Ui_MainWindow(object):
         self.menuMenu.setObjectName(u"menuMenu")
         self.menuDevice = QMenu(self.menuMenu)
         self.menuDevice.setObjectName(u"menuDevice")
+        self.menuDevice.setEnabled(True)
         self.menuHelp = QMenu(self.menubar)
         self.menuHelp.setObjectName(u"menuHelp")
         MainWindow.setMenuBar(self.menubar)

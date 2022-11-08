@@ -12,12 +12,12 @@ class SerialPort(QThread):
         super(SerialPort, self).__init__()
         self.send_flag = False           # Flag for interruption.
         self.serial = serial.Serial()    # Initialize the serail port for accessing port.
-        self.serial.port = "COM7"        # Set the initial parameter of serial port.
+        self.serial.port = None      # Set the initial parameter of serial port.
         self.serial.baudrate=115200
         self.serial.bytesize=8
         self.serial.timeout=10
         self.serial.stopbits=serial.STOPBITS_ONE
-        self.serial.open()               # open the serial port.
+        # self.serial.open()               # open the serial port.
         self.message = None
 
 # This run function is a default function of this thread.This run function will be automatically called when this thread start.
@@ -43,4 +43,7 @@ class SerialPort(QThread):
     def send_data(self,message):
         self.send_flag = True       
         self.message = message
-              
+
+    def port_setup(self,port):
+        self.serial.port = port
+        self.serial.open() 
