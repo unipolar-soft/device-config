@@ -12,6 +12,8 @@ from .projutil.log_conf import DIC_LOGGING_CONFIG
 from .projutil.conf import LOGGER_NAME
 import serial.tools.list_ports as port_list
 from app.ui.serial_port import SerialPort
+import zlib
+
 
 
 dictConfig(DIC_LOGGING_CONFIG)
@@ -56,7 +58,12 @@ class MainWindow(QMainWindow):
             "parity" : self.ui.parityInput.currentText()
         }
         find_message = "UNP\rFND\r\n"
+        remove_n = find_message.replace("\n","")
+        print(len(remove_n))
         feedback = "UNP\rACK:1\rMDN:01\rSLN:12345\rSID:101\rBDR:1\rPRB:0\r\n"
+        crc = zlib.crc32(remove_n.encode())
+        find_message_crc = "UNP\rFND\r"+str(crc)+"\n"
+        print(find_message_crc)
         self.ui.listWidget.clear()
         for key, value in config.items():
             try:
